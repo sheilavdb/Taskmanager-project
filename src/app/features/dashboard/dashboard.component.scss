@@ -1,0 +1,37 @@
+.task-list li.completed {
+  text-decoration: line-through;
+  color: gray;
+}
+
+.task-list li {
+  cursor: pointer;
+}
+
+.task-list li:hover {
+  background-color: #ededed;
+}
+
+.status {
+  font-style: italic;
+  &::before {
+    content: "• ";
+  }
+}
+
+li.completed {
+  color: gray;
+}
+
+.filter-input {
+  width: 80px;
+
+  @supports (-moz-appearance: textfield) {
+    -moz-appearance: textfield;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
