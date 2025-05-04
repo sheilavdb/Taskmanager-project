@@ -1,0 +1,33 @@
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+  <label for="title">Title</label>
+  <input id="title" formControlName="title" type="text" required />
+
+  <label for="projectId">Project</label>
+  <select id="projectId" formControlName="projectId" required>
+    <option value="" disabled>Select a project</option>
+    <option *ngFor="let project of projects" [value]="project.projectId">
+      {{ project.name }}
+    </option>
+  </select>
+
+  <label for="priority">Priority</label>
+  <select id="priority" formControlName="priority" required>
+    <option value="high">High</option>
+    <option value="medium">Medium</option>
+    <option value="low">Low</option>
+  </select>
+
+  <label for="dueDate">Due Date</label>
+  <input id="dueDate" formControlName="dueDate" type="date" required />
+
+  <label for="status">Status</label>
+  <select id="status" formControlName="status" required>
+    <option value="not-started">Not Started</option>
+    <option value="in-progress">In Progress</option>
+    <option value="completed">Completed</option>
+  </select>
+
+  <button type="submit" [disabled]="taskForm.invalid">Create Task</button>
+  <!--button is disabled until the form is valid-->
+  <div *ngIf="loading">Loading Projects...> {{ errorMessage }}</div>
+</form>

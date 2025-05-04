@@ -6,6 +6,6 @@ export interface Task {
   title: string;
   description?: string;
   priority: 'high' | 'medium' | 'low';
-  dueDate?: Date;
+  dueDate?: string | Date;
   status: 'not-started' | 'in-progress' | 'completed';
 }

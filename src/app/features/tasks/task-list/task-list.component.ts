@@ -6,8 +6,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-task',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './task.component.html',
-  styleUrls: ['./task.component.scss'],
+  templateUrl: './task-list.component.html',
+  styleUrls: ['./task-list.component.scss'],
 })
 export class TaskComponent {
   @Input() task: Task | undefined;

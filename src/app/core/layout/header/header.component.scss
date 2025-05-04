@@ -1,5 +1,24 @@
 .app-header {
+  display: flex;
+  justify-content: space-between;
   background-color: #3f51b5;
   color: white;
   padding: 1rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: end;
+  gap: 10px;
+}
+
+.addProjectButton {
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.addTaskButton {
+  padding: 8px;
+  border-radius: 10px;
 }

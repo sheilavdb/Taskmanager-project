@@ -1,5 +1,6 @@
-<h2>Task List</h2>
+<h2>Task List:</h2>
 
+<!--All filters, inline-->
 <div class="filters">
   <label>
     Status:
@@ -37,6 +38,7 @@
   </label>
   <button (click)="clearFilters()">Clear Filters</button>
 </div>
+<!--End of all filters-->
 
 <ul class="task-list">
   <ng-container *ngFor="let task of filteredTasks()">

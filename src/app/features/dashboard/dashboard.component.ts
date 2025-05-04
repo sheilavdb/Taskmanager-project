@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Task } from '../../models/task.model';
+import { TaskService } from '../../core/services/task.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,37 +15,7 @@ import { Task } from '../../models/task.model';
 export class DashboardComponent {
   showCompleted = false;
 
-  tasks: Task[] = [
-    {
-      taskId: 1,
-      projectId: 101,
-      title: 'Design login page',
-      status: 'not-started',
-      priority: 'high',
-      dueDate: new Date('2025-05-10'),
-    },
-    {
-      taskId: 2,
-      projectId: 101,
-      title: 'Implement task list',
-      status: 'completed',
-      priority: 'medium',
-    },
-    {
-      taskId: 3,
-      projectId: 102,
-      title: 'Write documentation',
-      status: 'in-progress',
-      priority: 'low',
-    },
-    {
-      taskId: 4,
-      projectId: 103,
-      title: 'Build user profile page',
-      status: 'not-started',
-      priority: 'high',
-    },
-  ];
+  tasks: Task[] = [];
 
   // Filter properties
   filterStatus = '';
@@ -52,6 +23,20 @@ export class DashboardComponent {
   filterTaskId: number | null = null;
   filterProjectId: number | null = null;
   filterTitle = '';
+
+  constructor(private taskService: TaskService) {}
+
+  ngOnInit() {
+    this.taskService.getTasks().subscribe(
+      (tasks) => {
+        console.log('Fetched tasks:', tasks);
+        this.tasks = tasks;
+      },
+      (error) => {
+        console.error('Error fetching tasks:', error);
+      }
+    );
+  }
 
   // Filter tasks based on selected filters
   filteredTasks() {
