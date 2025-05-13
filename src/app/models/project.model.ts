@@ -4,6 +4,7 @@ import { Task } from './task.model';
 export interface Project {
   projectId: number;
   name: string;
+  dueDate: Date | undefined | string;
   description?: string;
-  tasks: Task[];
+  tasks?: Task[];
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Project } from '../../models/project.model';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class ProjectService {
-  private apiUrl = 'https://dummyjson.com/c/adc8-a4d0-492c-8ed0';
+  private apiUrl = 'https://dummyjson.com/c/3642-1aa5-4286-9086'; // Replace with actual endpoint
 
   constructor(private http: HttpClient) {}
 
@@ -16,5 +16,9 @@ export class ProjectService {
     return this.http
       .get<{ projects: Project[] }>(this.apiUrl)
       .pipe(map((response) => response.projects));
+  }
+
+  createProject(project: Project): Observable<Project> {
+    return this.http.post<Project>(this.apiUrl, project);
   }
 }

@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Task } from '../../models/task.model';
 import { TaskService } from '../../core/services/task.service';
+import { TaskViewerComponent } from '../tasks/task-viewer/task-viewer.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TaskViewerComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent {
-  showCompleted = false;
-
+export class DashboardComponent implements OnInit, OnDestroy {
   tasks: Task[] = [];
 
   // Filter properties
@@ -24,18 +25,35 @@ export class DashboardComponent {
   filterProjectId: number | null = null;
   filterTitle = '';
 
-  constructor(private taskService: TaskService) {}
+  private taskCreatedSub!: Subscription;
+
+  constructor(private taskService: TaskService, private dialog: MatDialog) {}
 
   ngOnInit() {
-    this.taskService.getTasks().subscribe(
-      (tasks) => {
+    this.loadTasks();
+    // Subscribe to task creation events
+    this.taskCreatedSub = this.taskService.taskCreated$.subscribe((newTask) => {
+      console.log('[DashboardComponent] Received new task:', newTask);
+      this.tasks.push(newTask); // Add to task list
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.taskCreatedSub) {
+      this.taskCreatedSub.unsubscribe();
+    }
+  }
+
+  loadTasks() {
+    this.taskService.getTasks().subscribe({
+      next: (tasks) => {
         console.log('Fetched tasks:', tasks);
         this.tasks = tasks;
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching tasks:', error);
-      }
-    );
+      },
+    });
   }
 
   // Filter tasks based on selected filters
@@ -50,7 +68,9 @@ export class DashboardComponent {
         : true;
 
       const matchesTaskId =
-        this.filterTaskId !== null ? task.taskId === this.filterTaskId : true;
+        this.filterTaskId !== null
+          ? task.taskId.toString().startsWith(this.filterTaskId.toString())
+          : true;
 
       const matchesProjectId =
         this.filterProjectId !== null

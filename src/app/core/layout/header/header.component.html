@@ -1,7 +1,21 @@
 <header class="app-header">
   <div><h1>Task Manager</h1></div>
   <div class="buttons">
-    <button class="addProjectButton">Add Project</button>
-    <button class="addTaskButton">Add Task</button>
+    <button mat-raised-button>
+      <mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="add_home"
+      ></mat-icon
+      >Add Project
+    </button>
+    <button mat-raised-button (click)="openCreateTaskDialog()">
+      <mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="add_task"
+      ></mat-icon
+      >Add Task
+    </button>
   </div>
 </header>

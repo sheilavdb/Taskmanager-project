@@ -1,0 +1,17 @@
+<form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+  <label for="name">Name</label>
+  <input id="name" formControlName="name" type="text" required />
+
+  <label for="dueDate">Due Date</label>
+  <input id="dueDate" formControlName="dueDate" type="date" required />
+
+  <label for="description">Description</label>
+  <input id="description" name="description" type="text" />
+
+  <!--button is disabled until the form is valid-->
+  <button type="submit" [disabled]="projectForm.invalid">Create Project</button>
+</form>
+
+<div *ngIf="successMessage" class="success-message">
+  {{ successMessage }}
+</div>

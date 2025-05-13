@@ -3,12 +3,12 @@ import { Task } from '../../../models/task.model';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-task',
+  selector: 'app-task-viewer',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.scss'],
+  templateUrl: './task-viewer.component.html',
+  styleUrls: ['./task-viewer.component.scss'],
 })
-export class TaskComponent {
-  @Input() task: Task | undefined;
+export class TaskViewerComponent {
+  @Input() tasks: Task[] = [];
 }

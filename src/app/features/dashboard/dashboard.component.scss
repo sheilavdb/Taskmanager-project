@@ -1,13 +1,13 @@
-.task-list li.completed {
+.task-viewer li.completed {
   text-decoration: line-through;
   color: gray;
 }
 
-.task-list li {
+.task-viewer li {
   cursor: pointer;
 }
 
-.task-list li:hover {
+.task-viewer li:hover {
   background-color: #ededed;
 }
 

@@ -40,16 +40,8 @@
 </div>
 <!--End of all filters-->
 
-<ul class="task-list">
-  <ng-container *ngFor="let task of filteredTasks()">
-    <li [class.completed]="task.status === 'completed'">
-      <span class="projectId">{{ task.projectId }}</span>
-      {{ task.title }}
-      <span *ngIf="task.dueDate">
-        - Due: {{ task.dueDate | date : "shortDate" }}
-      </span>
-      <span class="priority">[Priority: {{ task.priority }}]</span>
-      <span class="status">[{{ task.status }}]</span>
-    </li>
-  </ng-container>
-</ul>
+<!--Component that displays all tasks-->
+<app-task-viewer [tasks]="filteredTasks()"></app-task-viewer>
+
+<!-- Shows Updated tasks -->
+<!--<app-task-create (taskCreated)="onTaskCreated($event)"></app-task-create>-->

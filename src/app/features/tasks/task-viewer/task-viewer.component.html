@@ -1,0 +1,14 @@
+<!--Component that handles display and interaction with tasks-->
+<ul class="task-viewer">
+  <ng-container *ngFor="let task of tasks">
+    <li [class.completed]="task?.status === 'completed'">
+      <span class="projectId">{{ task?.projectId }}</span>
+      {{ task?.title }}
+      <span *ngIf="task?.dueDate">
+        - Due: {{ task?.dueDate | date : "shortDate" }}
+      </span>
+      <span class="priority">[Priority: {{ task?.priority }}]</span>
+      <span class="status">[{{ task?.status }}]</span>
+    </li>
+  </ng-container>
+</ul>

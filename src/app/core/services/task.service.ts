@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Task } from '../../models/task.model';
 import { Project } from '../../models/project.model';
@@ -9,21 +9,27 @@ import { Project } from '../../models/project.model';
   providedIn: 'root',
 })
 export class TaskService {
-  private apiUrl = 'https://dummyjson.com/c/adc8-a4d0-492c-8ed0';
+  private apiUrl = 'https://dummyjson.com/c/3642-1aa5-4286-9086';
+
+  // Subject for new task events
+  private taskCreatedSource = new Subject<Task>();
+  taskCreated$ = this.taskCreatedSource.asObservable();
 
   constructor(private http: HttpClient) {}
 
+  // Normalize dates to remove time component
   private normalizeDate(date: Date): Date {
     const normalizedDate = new Date(date);
     normalizedDate.setHours(0, 0, 0, 0);
     return normalizedDate;
   }
 
+  // Fetch all tasks by flattening project structure
   getTasks(): Observable<Task[]> {
     return this.http.get<{ projects: Project[] }>(this.apiUrl).pipe(
       map((response) =>
         response.projects.flatMap((project) =>
-          project.tasks.map((task) => ({
+          (project.tasks ?? []).map((task) => ({
             ...task,
             projectId: project.projectId,
             dueDate: task.dueDate
@@ -35,7 +41,14 @@ export class TaskService {
     );
   }
 
+  // Optional: Real API call to persist a new task
   createTask(task: Task): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/tasks`, task);
+  }
+
+  // Emit a task once (only called from TaskCreateComponent)
+  emitTaskCreated(task: Task): void {
+    console.log('[TaskService] Emitting task via Subject:', task);
+    this.taskCreatedSource.next(task);
   }
 }
