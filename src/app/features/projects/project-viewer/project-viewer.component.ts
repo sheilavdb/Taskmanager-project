@@ -1,17 +1,15 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Task } from '../../../models/task.model';
 import { CommonModule } from '@angular/common';
-
+import { Component } from '@angular/core';
+import { Project } from '../../../models/project.model';
 @Component({
-  selector: 'app-task-viewer',
+  selector: 'app-project-viewer',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './task-viewer.component.html',
-  styleUrls: ['./task-viewer.component.scss'],
+  templateUrl: './project-viewer.component.html',
+  styleUrls: ['./project-viewer.component.scss'],
 })
-export class TaskViewerComponent {
-  @Input() tasks: Task[] = [];
-  @Output() taskClicked = new EventEmitter<Task>();
+export class ProjectViewerComponent {
+  projects: Project[] = [];
 
   isDueSoon(dueDate: string | Date | undefined): boolean {
     if (!dueDate) return false;
@@ -20,8 +18,7 @@ export class TaskViewerComponent {
     const due = new Date(dueDate);
     const diffInMs = due.getTime() - today.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-    console.log(`Task due in ${diffInDays} days`);
-    return diffInDays <= 2 && diffInDays >= 0;
+    return diffInDays <= 3 && diffInDays >= 0; // due within 3 days
   }
 
   isOverdue(dueDate: string | Date | undefined): boolean {
@@ -30,9 +27,5 @@ export class TaskViewerComponent {
     const today = new Date();
     const due = new Date(dueDate);
     return due < today;
-  }
-
-  onClick(task: Task) {
-    this.taskClicked.emit(task);
   }
 }

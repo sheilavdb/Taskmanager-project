@@ -1,3 +1,17 @@
 .completed {
-  background-color: lightgreen; /* Or any other style for completed tasks */
+  color: lightgrey; /* Or any other style for completed tasks */
+}
+
+.task-viewer li {
+  transition: background-color 0.3s ease;
+}
+
+.due-soon {
+  background-color: #fff3cd; // light yellow
+  border-left-color: orange;
+}
+
+.overdue {
+  background-color: #f8d7da; // light red
+  color: #721c24;
 }

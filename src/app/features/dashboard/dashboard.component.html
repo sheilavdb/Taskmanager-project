@@ -33,15 +33,16 @@
   </label>
 
   <label>
-    Title:
+    Task Title:
     <input type="text" [(ngModel)]="filterTitle" />
   </label>
   <button (click)="clearFilters()">Clear Filters</button>
 </div>
 <!--End of all filters-->
 
-<!--Component that displays all tasks-->
-<app-task-viewer [tasks]="filteredTasks()"></app-task-viewer>
-
-<!-- Shows Updated tasks -->
-<!--<app-task-create (taskCreated)="onTaskCreated($event)"></app-task-create>-->
+<!--Component that displays all tasks, and on click opens a view-->
+<app-task-viewer
+  [tasks]="filteredTasks()"
+  (taskClicked)="openTaskDetails($event)"
+>
+</app-task-viewer>

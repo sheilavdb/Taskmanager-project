@@ -51,7 +51,7 @@ export class TaskCreateComponent implements OnInit {
 
   private loadProjects(): void {
     this.loading = true; // Set loading to true while fetching data
-    this.projectService.getProjects().subscribe({
+    this.projectService.getAllProjects().subscribe({
       next: (projects) => {
         this.projects = projects;
         this.loading = false; // Set loading to false once data is fetched

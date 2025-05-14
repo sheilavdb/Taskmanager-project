@@ -1,4 +1,5 @@
-<form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+<h2 mat-dialog-title>Create New Project</h2>
+<form [formGroup]="projectForm" class="project-form" (ngSubmit)="onSubmit()">
   <label for="name">Name</label>
   <input id="name" formControlName="name" type="text" required />
 
@@ -9,7 +10,9 @@
   <input id="description" name="description" type="text" />
 
   <!--button is disabled until the form is valid-->
-  <button type="submit" [disabled]="projectForm.invalid">Create Project</button>
+  <button mat-flat-button type="submit" [disabled]="projectForm.invalid">
+    Create Project
+  </button>
 </form>
 
 <div *ngIf="successMessage" class="success-message">

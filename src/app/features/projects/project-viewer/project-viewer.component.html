@@ -1,0 +1,12 @@
+<p>project-viewer works!</p>
+<div
+  *ngFor="let project of projects"
+  [ngClass]="{
+    'due-soon': isDueSoon(project.dueDate),
+    overdue: isOverdue(project.dueDate)
+  }"
+>
+  <h3>{{ project.name }}</h3>
+  <p>{{ project.description }}</p>
+  <p>Due: {{ project.dueDate | date }}</p>
+</div>

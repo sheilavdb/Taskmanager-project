@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Task } from '../../models/task.model';
 import { TaskService } from '../../core/services/task.service';
 import { TaskViewerComponent } from '../tasks/task-viewer/task-viewer.component';
+import { TaskDetailComponent } from '../../shared/components/task-detail/task-detail.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
@@ -98,5 +99,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.filterTaskId = null;
     this.filterTitle = '';
     this.filterProjectId = null;
+  }
+
+  openTaskDetails(task: Task) {
+    const dialogRef = this.dialog.open(TaskDetailComponent, {
+      data: task,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.action === 'delete') {
+        this.tasks = this.tasks.filter((t) => t.taskId !== result.taskId);
+      }
+      if (result?.action === 'edit') {
+      }
+    });
   }
 }

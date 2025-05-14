@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../../models/task.model';
+import { ProjectCreateComponent } from '../../../features/projects/project-create/project-create.component';
 
 @Component({
   selector: 'app-header',
@@ -24,6 +25,18 @@ export class HeaderComponent {
     dialogRef.afterClosed().subscribe((newTask) => {
       if (newTask) {
         console.log('[HeaderComponent] Received new task:', newTask);
+      }
+    });
+  }
+
+  openCreateProjectDialog(): void {
+    const dialogRef = this.dialog.open(ProjectCreateComponent, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((newProject) => {
+      if (newProject) {
+        console.log('[HeaderComponent] New Project Created:', newProject);
       }
     });
   }
