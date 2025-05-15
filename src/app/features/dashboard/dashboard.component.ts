@@ -6,8 +6,11 @@ import { Task } from '../../models/task.model';
 import { TaskService } from '../../core/services/task.service';
 import { TaskViewerComponent } from '../tasks/task-viewer/task-viewer.component';
 import { TaskDetailComponent } from '../../shared/components/task-detail/task-detail.component';
+import { Project } from '../../models/project.model';
+import { ProjectService } from '../../core/services/project.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { TaskCreateComponent } from '../tasks/task-create/task-create.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +21,7 @@ import { Subscription } from 'rxjs';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   tasks: Task[] = [];
+  projects: Project[] = [];
 
   // Filter properties
   filterStatus = '';
@@ -28,10 +32,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private taskCreatedSub!: Subscription;
 
-  constructor(private taskService: TaskService, private dialog: MatDialog) {}
+  constructor(
+    private taskService: TaskService,
+    private projectService: ProjectService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.loadTasks();
+    this.loadProjects();
     // Subscribe to task creation events
     this.taskCreatedSub = this.taskService.taskCreated$.subscribe((newTask) => {
       console.log('[DashboardComponent] Received new task:', newTask);
@@ -53,6 +62,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error fetching tasks:', error);
+      },
+    });
+  }
+
+  loadProjects() {
+    this.projectService.getAllProjects().subscribe({
+      next: (projects) => {
+        this.projects = projects;
+      },
+      error: (err) => {
+        console.error('Failed to load projects', err);
       },
     });
   }
@@ -103,7 +123,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openTaskDetails(task: Task) {
     const dialogRef = this.dialog.open(TaskDetailComponent, {
-      data: task,
+      data: { task: task, projects: this.projects },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -111,6 +131,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.tasks = this.tasks.filter((t) => t.taskId !== result.taskId);
       }
       if (result?.action === 'edit') {
+        this.loadProjects();
+        // Open the edit form dialog
+        const editDialogRef = this.dialog.open(TaskCreateComponent, {
+          //use the create task form instead
+          data: {
+            task: result.task,
+            projects: this.projects,
+          },
+        });
+
+        editDialogRef.afterClosed().subscribe((updatedTask) => {
+          console.log('[Dashboard] Edit dialog closed with', updatedTask);
+          if (updatedTask) {
+            // Replace the task in the list
+            const index = this.tasks.findIndex(
+              (t) => t.taskId === updatedTask.taskId
+            );
+            if (index > -1) {
+              this.tasks = [
+                ...this.tasks.slice(0, index),
+                updatedTask,
+                ...this.tasks.slice(index + 1),
+              ];
+            }
+          }
+        });
       }
     });
   }

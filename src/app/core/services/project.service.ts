@@ -8,7 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class ProjectService {
-  private apiUrl = 'https://dummyjson.com/c/3642-1aa5-4286-9086'; // Replace with actual endpoint
+  private apiUrl = 'https://dummyjson.com/c/000d-3671-46cf-985f';
   private userProjects: Project[] = [];
 
   private projectCreated$ = new BehaviorSubject<Project | null>(null);

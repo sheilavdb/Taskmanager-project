@@ -10,17 +10,28 @@ import { TaskService } from '../../../core/services/task.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { Task } from '../../../models/task.model';
 import { Project } from '../../../models/project.model';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MatDialogModule,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-task-create',
   standalone: true,
   templateUrl: './task-create.component.html',
   styleUrls: ['./task-create.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+  ],
 })
 export class TaskCreateComponent implements OnInit {
   taskForm!: FormGroup;
+  isEditMode = false;
   projects: Project[] = [];
   loading = false; //track loading status
   errorMessage: string | null = null; //display error message
@@ -30,22 +41,32 @@ export class TaskCreateComponent implements OnInit {
     private fb: FormBuilder,
     private projectService: ProjectService,
     private taskService: TaskService,
-    private dialogRef: MatDialogRef<TaskCreateComponent>
+    private dialogRef: MatDialogRef<TaskCreateComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { task?: Task; projects?: Project[] }
   ) {}
 
   ngOnInit(): void {
+    this.isEditMode = !!this.data?.task;
     this.initForm();
-    this.loadProjects();
+
+    if (this.data?.projects) {
+      this.projects = this.data.projects;
+    } else {
+      this.loadProjects();
+    }
   }
 
   private initForm(): void {
+    const task = this.data?.task;
+
     this.taskForm = this.fb.group({
-      title: ['', Validators.required],
-      description: [''],
-      priority: ['medium', Validators.required],
-      dueDate: [''], // Date picker or input
-      status: ['not-started', Validators.required],
-      projectId: ['', Validators.required],
+      title: [task?.title || '', Validators.required],
+      description: [task?.description || ''],
+      priority: [task?.priority || 'medium', Validators.required],
+      dueDate: [task?.dueDate || ''],
+      status: [task?.status || 'not-started', Validators.required],
+      projectId: [task?.projectId || '', Validators.required],
     });
   }
 
@@ -69,21 +90,26 @@ export class TaskCreateComponent implements OnInit {
 
     const formValue = this.taskForm.value;
 
-    const task: Task = {
+    const updatedTask: Task = {
+      ...this.data?.task, //reuse TaskId if editing
       projectId: formValue.projectId,
       title: formValue.title,
       description: formValue.description,
       priority: formValue.priority,
       dueDate: formValue.dueDate,
       status: formValue.status,
-      taskId: Number(
-        `${formValue.projectId}${Math.floor(Math.random() * 1000)}`
-      ),
+      taskId:
+        this.data?.task?.taskId ||
+        Number(`${formValue.projectId}${Math.floor(Math.random() * 1000)}`),
     };
 
-    console.log('[TaskCreateComponent] Emitting new task:', task);
-    this.taskService.emitTaskCreated(task); // Send to listeners
-    this.dialogRef.close(task); // Close dialog and return new task
-    this.successMessage = 'Task created.';
+    if (this.isEditMode) {
+      console.log('[TaskCreate] Closing with updated task:', updatedTask);
+      this.dialogRef.close(updatedTask); // return updated task
+    } else {
+      this.taskService.emitTaskCreated(updatedTask); // notify others
+      this.dialogRef.close(updatedTask); // close with created task
+      this.successMessage = 'Task created.';
+    }
   }
 }

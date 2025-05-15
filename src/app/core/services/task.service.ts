@@ -9,7 +9,7 @@ import { Project } from '../../models/project.model';
   providedIn: 'root',
 })
 export class TaskService {
-  private apiUrl = 'https://dummyjson.com/c/3642-1aa5-4286-9086';
+  private apiUrl = 'https://dummyjson.com/c/000d-3671-46cf-985f';
 
   // Subject for new task events
   private taskCreatedSource = new Subject<Task>();

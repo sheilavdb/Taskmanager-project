@@ -7,5 +7,5 @@ export interface Task {
   description?: string;
   priority: 'high' | 'medium' | 'low';
   dueDate?: string | Date;
-  status: 'not-started' | 'in-progress' | 'completed';
+  status: 'in-progress' | 'completed';
 }

@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Task } from '../../../models/task.model';
+import { Project } from '../../../models/project.model';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,9 +15,21 @@ export class TaskDetailComponent {
   editMode = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public task: Task,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { task: Task; projects: Project[] },
     private dialogRef: MatDialogRef<TaskDetailComponent>
   ) {}
+
+  get task(): Task {
+    return this.data.task;
+  }
+
+  get projectName(): string {
+    const project = this.data.projects.find(
+      (p) => p.projectId === this.data.task.projectId
+    );
+    return project?.name ?? 'Unknown Project';
+  }
 
   close() {
     this.dialogRef.close();
