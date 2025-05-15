@@ -43,6 +43,7 @@
 <!--Component that displays all tasks, and on click opens a view-->
 <app-task-viewer
   [tasks]="filteredTasks()"
+  [projects]="projects"
   (taskClicked)="openTaskDetails($event)"
 >
 </app-task-viewer>

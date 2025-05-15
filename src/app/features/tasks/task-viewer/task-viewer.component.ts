@@ -1,5 +1,13 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Task } from '../../../models/task.model';
+import { Project } from '../../../models/project.model';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,9 +17,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './task-viewer.component.html',
   styleUrls: ['./task-viewer.component.scss'],
 })
-export class TaskViewerComponent {
+export class TaskViewerComponent implements OnChanges {
   @Input() tasks: Task[] = [];
+  @Input() projects: Project[] = [];
   @Output() taskClicked = new EventEmitter<Task>();
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['projects']) {
+      console.log('Projects updated:', this.projects);
+    }
+  }
 
   isDueSoon(dueDate: string | Date | undefined): boolean {
     if (!dueDate) return false;
@@ -34,5 +49,16 @@ export class TaskViewerComponent {
 
   onClick(task: Task) {
     this.taskClicked.emit(task);
+  }
+
+  getProjectName(projectId: number | string): string {
+    const pid = Number(projectId);
+    console.log('Looking for projectId:', pid);
+    console.log('Available projects:', this.projects);
+
+    const project = this.projects.find((p) => Number(p.projectId) === pid);
+    console.log('Matched project:', project);
+
+    return project ? project.name : 'Unknown Project';
   }
 }

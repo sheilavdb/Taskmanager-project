@@ -36,6 +36,7 @@ export class TaskCreateComponent implements OnInit {
   loading = false; //track loading status
   errorMessage: string | null = null; //display error message
   successMessage = '';
+  initialFormValues: any;
 
   constructor(
     private fb: FormBuilder,
@@ -65,9 +66,10 @@ export class TaskCreateComponent implements OnInit {
       description: [task?.description || ''],
       priority: [task?.priority || 'medium', Validators.required],
       dueDate: [task?.dueDate || ''],
-      status: [task?.status || 'not-started', Validators.required],
+      status: [task?.status || 'in-progress', Validators.required],
       projectId: [task?.projectId || '', Validators.required],
     });
+    this.initialFormValues = this.taskForm.value;
   }
 
   private loadProjects(): void {
@@ -111,5 +113,13 @@ export class TaskCreateComponent implements OnInit {
       this.dialogRef.close(updatedTask); // close with created task
       this.successMessage = 'Task created.';
     }
+  }
+
+  close() {
+    this.dialogRef.close();
+  }
+
+  resetForm(): void {
+    this.taskForm.reset(this.initialFormValues);
   }
 }

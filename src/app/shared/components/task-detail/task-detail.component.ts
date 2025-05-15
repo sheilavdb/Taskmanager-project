@@ -1,18 +1,24 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Task } from '../../../models/task.model';
 import { Project } from '../../../models/project.model';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-task-detail',
+  standalone: true,
+  imports: [CommonModule, MatDialogModule, MatButtonModule],
   templateUrl: './task-detail.component.html',
   styleUrls: ['./task-detail.component.scss'],
-  standalone: true,
-  imports: [CommonModule],
 })
-export class TaskDetailComponent {
-  editMode = false;
+export class TaskDetailComponent implements OnInit {
+  task!: Task;
+  project!: Project | undefined;
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -20,29 +26,34 @@ export class TaskDetailComponent {
     private dialogRef: MatDialogRef<TaskDetailComponent>
   ) {}
 
-  get task(): Task {
-    return this.data.task;
+  ngOnInit(): void {
+    this.task = this.data.task;
+
+    // Find the project this task belongs to
+    this.project = this.data.projects.find(
+      (proj) => Number(proj.projectId) === Number(this.task.projectId)
+    );
+
+    if (!this.project) {
+      console.warn(
+        `[TaskDetailComponent] Could not find project with ID ${this.task.projectId}`
+      );
+    }
   }
 
   get projectName(): string {
-    const project = this.data.projects.find(
-      (p) => p.projectId === this.data.task.projectId
-    );
-    return project?.name ?? 'Unknown Project';
+    return this.project?.name ?? 'Unknown';
   }
 
-  close() {
+  closeDialog() {
     this.dialogRef.close();
   }
 
   deleteTask() {
-    // trigger deletion logic here or emit event
     this.dialogRef.close({ action: 'delete', taskId: this.task.taskId });
   }
 
   editTask() {
-    // open edit form or emit event
-    this.editMode = true;
     this.dialogRef.close({ action: 'edit', task: this.task });
   }
 }

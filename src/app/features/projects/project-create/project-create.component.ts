@@ -27,6 +27,7 @@ export class ProjectCreateComponent {
   projectForm!: FormGroup;
   errorMessage: string | null = null;
   successMessage: string = '';
+  initialFormValues: any;
 
   constructor(
     private fb: FormBuilder,
@@ -38,6 +39,7 @@ export class ProjectCreateComponent {
       description: [''],
       dueDate: ['', Validators.required],
     });
+    this.initialFormValues = this.projectForm.value;
   }
 
   onSubmit(): void {
@@ -59,12 +61,11 @@ export class ProjectCreateComponent {
     this.successMessage = 'Project created.';
   }
 
+  close() {
+    this.dialogRef.close();
+  }
+
   resetForm(): void {
-    this.projectForm.reset({
-      name: '',
-      description: '',
-      dueDate: '',
-      projectId: '',
-    });
+    this.projectForm.reset(this.initialFormValues);
   }
 }

@@ -45,9 +45,15 @@
   <br />
 
   <!-- Submit Button -->
-  <button mat-flat-button type="submit" [disabled]="taskForm.invalid">
-    {{ isEditMode ? "Update Task" : "Create Task" }}
-  </button>
+  <div class="buttons">
+    <button mat-flat-button type="submit" [disabled]="taskForm.invalid">
+      {{ isEditMode ? "Update Task" : "Create Task" }}
+    </button>
+    <button mat-flat-button type="button" (click)="close()">Close</button>
+    <button mat-flat-button type="button" (click)="resetForm()">
+      Reset Form
+    </button>
+  </div>
   <br />
 
   <!-- Loading / Error -->

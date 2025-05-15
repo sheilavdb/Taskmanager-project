@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Task } from '../../models/task.model';
 import { TaskService } from '../../core/services/task.service';
@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   filterTitle = '';
 
   private taskCreatedSub!: Subscription;
+  private projectCreatedSub!: Subscription;
 
   constructor(
     private taskService: TaskService,
@@ -41,23 +42,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadTasks();
     this.loadProjects();
-    // Subscribe to task creation events
+
+    // Subscribe to new task creation
     this.taskCreatedSub = this.taskService.taskCreated$.subscribe((newTask) => {
-      console.log('[DashboardComponent] Received new task:', newTask);
-      this.tasks.push(newTask); // Add to task list
+      if (newTask) {
+        console.log('[DashboardComponent] Received new task:', newTask);
+        this.tasks.push(newTask);
+      }
     });
+
+    // Subscribe to new project creation (frontend only)
+    this.projectCreatedSub = this.projectService.projectCreated$.subscribe(
+      (newProject) => {
+        if (newProject) {
+          console.log('[DashboardComponent] Received new project:', newProject);
+          this.projects.push(newProject);
+        }
+      }
+    );
   }
 
   ngOnDestroy(): void {
-    if (this.taskCreatedSub) {
-      this.taskCreatedSub.unsubscribe();
-    }
+    this.taskCreatedSub?.unsubscribe();
+    this.projectCreatedSub?.unsubscribe();
   }
 
   loadTasks() {
     this.taskService.getTasks().subscribe({
       next: (tasks) => {
-        console.log('Fetched tasks:', tasks);
         this.tasks = tasks;
       },
       error: (error) => {
@@ -77,29 +89,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Filter tasks based on selected filters
   filteredTasks() {
     return this.tasks.filter((task) => {
       const matchesStatus = this.filterStatus
         ? task.status === this.filterStatus
         : true;
-
       const matchesPriority = this.filterPriority
         ? task.priority === this.filterPriority
         : true;
-
       const matchesTaskId =
         this.filterTaskId !== null
           ? task.taskId.toString().startsWith(this.filterTaskId.toString())
           : true;
-
       const matchesProjectId =
         this.filterProjectId !== null
           ? task.projectId
               .toString()
               .startsWith(this.filterProjectId.toString())
           : true;
-
       const matchesTitle = this.filterTitle
         ? task.title.toLowerCase().includes(this.filterTitle.toLowerCase())
         : true;
@@ -113,6 +120,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     });
   }
+
   clearFilters() {
     this.filterStatus = '';
     this.filterPriority = '';
@@ -123,18 +131,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openTaskDetails(task: Task) {
     const dialogRef = this.dialog.open(TaskDetailComponent, {
-      data: { task: task, projects: this.projects },
+      width: '600px',
+      data: {
+        task: task,
+        projects: this.projects,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.action === 'delete') {
         this.tasks = this.tasks.filter((t) => t.taskId !== result.taskId);
       }
+
       if (result?.action === 'edit') {
-        this.loadProjects();
-        // Open the edit form dialog
         const editDialogRef = this.dialog.open(TaskCreateComponent, {
-          //use the create task form instead
+          width: '600px',
           data: {
             task: result.task,
             projects: this.projects,
@@ -142,9 +153,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
 
         editDialogRef.afterClosed().subscribe((updatedTask) => {
-          console.log('[Dashboard] Edit dialog closed with', updatedTask);
           if (updatedTask) {
-            // Replace the task in the list
             const index = this.tasks.findIndex(
               (t) => t.taskId === updatedTask.taskId
             );

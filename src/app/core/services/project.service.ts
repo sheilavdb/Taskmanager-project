@@ -11,7 +11,10 @@ export class ProjectService {
   private apiUrl = 'https://dummyjson.com/c/000d-3671-46cf-985f';
   private userProjects: Project[] = [];
 
-  private projectCreated$ = new BehaviorSubject<Project | null>(null);
+  private projectCreatedSubject$ = new BehaviorSubject<Project | null>(null);
+  get projectCreated$(): Observable<Project | null> {
+    return this.projectCreatedSubject$.asObservable();
+  }
   private apiProjects$ = new BehaviorSubject<Project[]>([]);
 
   constructor(private http: HttpClient) {
@@ -43,7 +46,7 @@ export class ProjectService {
   // Emit a newly created project (frontend only)
   emitProjectCreated(project: Project): void {
     this.userProjects.push(project);
-    this.projectCreated$.next(project);
+    this.projectCreatedSubject$.next(project);
   }
 
   getNextAvailableId(): number {

@@ -10,9 +10,13 @@
   <input id="description" name="description" type="text" />
 
   <!--button is disabled until the form is valid-->
-  <button mat-flat-button type="submit" [disabled]="projectForm.invalid">
-    Create Project
-  </button>
+  <div class="buttons">
+    <button mat-flat-button type="submit" [disabled]="projectForm.invalid">
+      Create Project
+    </button>
+    <button mat-flat-button (click)="close()">Close</button>
+    <button mat-flat-button (click)="resetForm()">Reset Form</button>
+  </div>
 </form>
 
 <div *ngIf="successMessage" class="success-message">

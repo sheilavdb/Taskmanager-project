@@ -1,17 +1,21 @@
-<!--Component that handles display and interaction with tasks-->
-<ul class="task-viewer">
+<ul *ngIf="projects.length > 0" class="task-viewer">
   <ng-container *ngFor="let task of tasks">
     <li
+      class="list-item"
       (click)="onClick(task)"
       [class.completed]="task?.status === 'completed'"
       [class.due-soon]="isDueSoon(task?.dueDate)"
       [class.overdue]="isOverdue(task?.dueDate)"
     >
-      <span class="projectId">Project ID: {{ task?.projectId }}</span>
-      {{ task?.title }}
+      <span class="projectName"
+        >Project: {{ getProjectName(task.projectId) }}</span
+      ><br />
+      <strong>{{ task?.title }}</strong>
       <span *ngIf="task?.dueDate">
-        - Due: {{ task?.dueDate | date : "shortDate" }}
-      </span>
+        - Due: {{ task?.dueDate | date : "shortDate" }}</span
+      >
     </li>
   </ng-container>
 </ul>
+
+<div *ngIf="projects?.length === 0">Loading projects...</div>
